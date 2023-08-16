@@ -17,44 +17,23 @@ using System.Collections.Generic;
 /// </summary>
 public static class GameEvent
 {
-    private static Dictionary<string, Action> listeners = new Dictionary<string, Action>();
+    private static Dictionary<string, Listener> listeners = new Dictionary<string, Listener>();
     private static Dictionary<string, int> counters = new Dictionary<string, int>();
-    //private static Dictionary<string, Listener<GameEventParams>> listenersWithParams = new Dictionary<string, Listener<GameEventParams>>();
 
-    //public delegate void Listener<T>(T @params) where T : GameEventParams;
+    public delegate void Listener(object? value);
+    public delegate void EmptyListener();
 
-    //public interface GameEventParams { }
+    public static void Register(string e, EmptyListener listener)
+    {
+        Register(e, () => { listener(); }); //TODO: Is this good performance-wise?
+    }
 
-    //public class ExampleParams : GameEventParams
-    //{
-    //    public string value;
-    //    public int count;
-    //}
-
-    //public static void Register<T>(string e, Listener<T> listener)
-    //    where T : GameEventParams
-    //{
-    //    if (!listenersWithParams.ContainsKey(e))
-    //    {
-    //        listenersWithParams.Add(e, listener);
-    //    }
-
-    //    listenersWithParams[e] += listener;
-    //}
-
-    //public static void Test()
-    //{
-    //    Register<ExampleParams>("Test", (ExampleParams p) =>
-    //    {
-    //        print($"The value is {p.value}");
-    //    });
-    //}
-
-    public static void Register(string e, Action listener)
+    public static void Register(string e, Listener listener)
     {
         if (!listeners.ContainsKey(e))
         {
             listeners.Add(e, listener);
+            // listeners.Add(e, (v) => { (T)v });
         }
         else
         {
@@ -62,7 +41,7 @@ public static class GameEvent
         }
     }
 
-    public static void Unregister(string e, Action listener)
+    public static void Unregister(string e, Listener listener)
     {
         if (listeners.ContainsKey(e))
         {
@@ -78,12 +57,12 @@ public static class GameEvent
         }
     }
 
-    public static void Raise(string e)
+    public static void Raise(string e, object value = null)
     {
         if (listeners.ContainsKey(e))
         {
             CountUp(e);
-            listeners[e]?.Invoke();
+            listeners[e]?.Invoke(value);
         }
     }
 
