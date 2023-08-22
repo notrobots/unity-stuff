@@ -87,8 +87,8 @@ public static class GameEvent
 
         foreach (Transform child in target.transform)
         {
-            //TODO: Go deeper than one level
-            receivers += Raise(child.gameObject, e);
+            //TODO: Add an optional maxDepth ?
+            receivers += RaiseDownwards(child.gameObject, e);
         }
 
         return receivers;
@@ -100,7 +100,7 @@ public static class GameEvent
 
         if (target.transform.parent != null)
         {
-            receivers += Raise(target.transform.parent.gameObject, e);
+            receivers += RaiseUpwards(target.transform.parent.gameObject, e);
         }
 
         return receivers;
@@ -259,7 +259,7 @@ public static class GameEvent<A>
         foreach (Transform child in target.transform)
         {
             //TODO: Go deeper than one level
-            receivers += Raise(child.gameObject, e, a);
+            receivers += RaiseDownwards(child.gameObject, e, a);
         }
 
         return receivers;
@@ -271,7 +271,7 @@ public static class GameEvent<A>
 
         if (target.transform.parent != null)
         {
-            receivers += Raise(target.transform.parent.gameObject, e, a);
+            receivers += RaiseUpwards(target.transform.parent.gameObject, e, a);
         }
 
         return receivers;
