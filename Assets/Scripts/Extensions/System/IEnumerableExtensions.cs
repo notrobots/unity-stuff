@@ -4,6 +4,28 @@ using System.Text;
 
 public static class IEnumerableExtensions
 {
+    public static bool None<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+        if (predicate == null)
+        {
+            throw new ArgumentNullException(nameof(predicate));
+        }
+
+        foreach (T item in source)
+        {
+            if (predicate(item))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static string JoinToString<T>(
         this IEnumerable<T> enumerable,
         string separator = ", ",
